@@ -195,51 +195,59 @@
           "detailedStats" : false,
           "udf_definitions" : [ ],
           "functions" : [ {
+            "addReplaceColumn" : "customer_id",
+            "functionName" : "column_expression",
             "inputArgs" : [ {
               "type" : "sql",
               "expr" : "customer_id"
             } ],
-            "functionName" : "column_expression",
-            "enabled" : true,
-            "addReplaceColumn" : "customer_id"
+            "comment" : null,
+            "enabled" : true
           }, {
+            "addReplaceColumn" : "first_name",
+            "functionName" : "column_expression",
             "inputArgs" : [ {
               "type" : "sql",
               "expr" : "first_name"
             } ],
-            "functionName" : "column_expression",
-            "enabled" : true,
-            "addReplaceColumn" : "first_name"
+            "comment" : null,
+            "enabled" : true
           }, {
+            "addReplaceColumn" : "last_name",
+            "functionName" : "column_expression",
             "inputArgs" : [ {
               "type" : "sql",
               "expr" : "last_name"
             } ],
-            "functionName" : "column_expression",
-            "enabled" : true,
-            "addReplaceColumn" : "last_name"
+            "comment" : null,
+            "enabled" : true
           }, {
+            "addReplaceColumn" : "amount",
+            "functionName" : "column_expression",
             "inputArgs" : [ {
               "type" : "sql",
               "expr" : "amount"
             } ],
-            "functionName" : "column_expression",
-            "enabled" : true,
-            "addReplaceColumn" : "amount"
+            "comment" : null,
+            "enabled" : true
           }, {
+            "addReplaceColumn" : "full_name",
+            "functionName" : "column_expression",
             "inputArgs" : [ {
               "type" : "sql",
               "expr" : "concat(first_name, ' - ', last_name)"
             } ],
-            "functionName" : "column_expression",
-            "enabled" : true,
-            "addReplaceColumn" : "full_name"
+            "comment" : null,
+            "enabled" : true
           }, {
+            "addReplaceColumn" : "order_status",
+            "functionName" : null,
             "inputArgs" : [ {
               "type" : "sql",
               "expr" : "order_status"
             } ],
-            "addReplaceColumn" : "order_status"
+            "comment" : null,
+            "enabled" : true
           } ],
           "limit" : 0
         },
@@ -324,7 +332,7 @@
     "groups" : [ ],
     "locked" : false,
     "metainfo" : {
-      "lastUpdated" : 1620253018565,
+      "lastUpdated" : 1620253099714,
       "id" : "SummitWorkflow",
       "memory" : 1,
       "imported" : true,
