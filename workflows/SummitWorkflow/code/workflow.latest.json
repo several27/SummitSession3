@@ -1,96 +1,52 @@
 {
-  "resolvers" : [ ],
   "graph" : {
-    "metainfo" : {
-      "cluster" : "local",
-      "id" : "id",
-      "memory" : 1,
-      "mode" : "batch",
-      "processors" : 1,
-      "language" : "scala",
-      "interimMode" : "full",
-      "udfs" : {
-        "language" : "scala",
-        "udfs" : [ ]
-      },
-      "udafs" : {
-        "language" : "scala",
-        "code" : "package udfs\n\nimport org.apache.spark.sql.expressions._\nimport org.apache.spark.sql.types._\nimport org.apache.spark.sql._\n\n/**\n  * Here you can define your custom aggregate functions.\n  *\n  * Make sure to register your `udafs` in the register_udafs function below.\n  *\n  * Example:\n  *\n  * object GeometricMean extends UserDefinedAggregateFunction {\n  *   // This is the input fields for your aggregate function.\n  *   override def inputSchema: org.apache.spark.sql.types.StructType =\n  *     StructType(StructField(\"value\", DoubleType) :: Nil)\n  *\n  *   // This is the internal fields you keep for computing your aggregate.\n  *   override def bufferSchema: StructType = StructType(\n  *     StructField(\"count\", LongType) ::\n  *     StructField(\"product\", DoubleType) :: Nil\n  *   )\n  *\n  *   // This is the output type of your aggregatation function.\n  *   override def dataType: DataType = DoubleType\n  *\n  *   override def deterministic: Boolean = true\n  *\n  *   // This is the initial value for your buffer schema.\n  *   override def initialize(buffer: MutableAggregationBuffer): Unit = {\n  *     buffer(0) = 0L\n  *     buffer(1) = 1.0\n  *   }\n  *\n  *   // This is how to update your buffer schema given an input.\n  *   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {\n  *     buffer(0) = buffer.getAs[Long](0) + 1\n  *     buffer(1) = buffer.getAs[Double](1) * input.getAs[Double](0)\n  *   }\n  *\n  *   // This is how to merge two objects with the bufferSchema type.\n  *   override def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {\n  *     buffer1(0) = buffer1.getAs[Long](0) + buffer2.getAs[Long](0)\n  *     buffer1(1) = buffer1.getAs[Double](1) * buffer2.getAs[Double](1)\n  *   }\n  *\n  *   // This is where you output the final value, given the final value of your bufferSchema.\n  *   override def evaluate(buffer: Row): Any = {\n  *     math.pow(buffer.getDouble(1), 1.toDouble / buffer.getLong(0))\n  *   }\n  * }\n  *\n  */\n\n\nobject UDAFs {\n  /**\n    * Registers UDAFs with Spark SQL\n    */\n  def registerUDAFs(spark: SparkSession): Unit = {\n    /**\n      * Example:\n      *\n      * spark.udf.register(\"gm\", GeometricMean)\n      *\n      */\n\n\n  }\n}\n"
-      },
-      "sparkOptions" : {
-        "options" : {
-          "spark.app.name" : "SummitWorkflow",
-          "spark.sql.catalogImplementation" : "hive"
-        }
-      }
-    },
-    "connections" : [ {
-      "metadata" : {
-        "route" : "e1"
-      },
-      "src" : {
-        "port" : "out",
-        "process" : "Customers"
-      },
-      "tgt" : {
-        "port" : "left",
-        "process" : "By_CustomerId"
-      }
-    }, {
-      "metadata" : {
-        "route" : "e2"
-      },
-      "src" : {
-        "port" : "out",
-        "process" : "Orders"
-      },
-      "tgt" : {
-        "port" : "right",
-        "process" : "By_CustomerId"
-      }
-    }, {
-      "metadata" : {
-        "route" : "e3"
-      },
-      "src" : {
-        "port" : "out",
-        "process" : "By_CustomerId"
-      },
-      "tgt" : {
-        "port" : "in",
-        "process" : "With_FullName"
-      }
-    }, {
-      "metadata" : {
-        "route" : "e4"
-      },
-      "src" : {
-        "port" : "out",
-        "process" : "With_FullName"
-      },
-      "tgt" : {
-        "port" : "in",
-        "process" : "Sum_Amounts"
-      }
-    }, {
-      "metadata" : {
-        "route" : "e5"
-      },
-      "src" : {
-        "port" : "out",
-        "process" : "Sum_Amounts"
-      },
-      "tgt" : {
-        "port" : "in",
-        "process" : "Report"
-      }
-    } ],
-    "groups" : [ ],
-    "inports" : { },
-    "outports" : { },
     "processes" : {
       "By_CustomerId" : {
         "component" : "Join",
+        "group" : null,
+        "properties" : {
+          "udf_definitions" : [ ],
+          "limit" : 0,
+          "cache" : false,
+          "detailedStats" : false,
+          "phase" : 0,
+          "joinType" : "inner",
+          "joinCondition" : {
+            "expr" : "col(\"left.customer_id\") === col(\"right.customer_id\")",
+            "format" : "scala"
+          },
+          "selectColumns" : [ {
+            "targetCol" : "customer_id",
+            "expression" : {
+              "expr" : "col(\"left.customer_id\")",
+              "format" : "scala"
+            }
+          }, {
+            "targetCol" : "first_name",
+            "expression" : {
+              "expr" : "col(\"left.first_name\")",
+              "format" : "scala"
+            }
+          }, {
+            "targetCol" : "last_name",
+            "expression" : {
+              "expr" : "col(\"left.last_name\")",
+              "format" : "scala"
+            }
+          }, {
+            "targetCol" : "amount",
+            "expression" : {
+              "expr" : "col(\"right.amount\")",
+              "format" : "scala"
+            }
+          }, {
+            "targetCol" : "order_status",
+            "expression" : {
+              "expr" : "col(\"right.order_status\")",
+              "format" : "scala"
+            }
+          } ]
+        },
         "metadata" : {
           "label" : "By CustomerId",
           "x" : 380,
@@ -100,61 +56,11 @@
           "inputs" : [ "left", "right" ],
           "outputs" : [ "out" ]
         },
-        "properties" : {
-          "src_desc" : "",
-          "phase" : 0,
-          "joinCondition" : {
-            "format" : "scala",
-            "expr" : "col(\"left.customer_id\") === col(\"right.customer_id\")"
-          },
-          "selectColumns" : [ {
-            "targetCol" : "customer_id",
-            "isLeftTableCol" : true,
-            "expression" : {
-              "format" : "scala",
-              "expr" : "col(\"left.customer_id\")"
-            }
-          }, {
-            "targetCol" : "first_name",
-            "isLeftTableCol" : true,
-            "expression" : {
-              "format" : "scala",
-              "expr" : "col(\"left.first_name\")"
-            }
-          }, {
-            "targetCol" : "last_name",
-            "isLeftTableCol" : true,
-            "expression" : {
-              "format" : "scala",
-              "expr" : "col(\"left.last_name\")"
-            }
-          }, {
-            "targetCol" : "amount",
-            "isLeftTableCol" : false,
-            "expression" : {
-              "format" : "scala",
-              "expr" : "col(\"right.amount\")"
-            }
-          } ],
-          "ramp" : 0,
-          "detailedStats" : false,
-          "udf_definitions" : [ ],
-          "joinType" : "inner",
-          "limit" : 0
-        },
-        "ignore" : false
+        "lineage" : ""
       },
       "Customers" : {
         "component" : "Source",
-        "metadata" : {
-          "label" : "Customers",
-          "x" : 181,
-          "y" : 197
-        },
-        "ports" : {
-          "inputs" : [ ],
-          "outputs" : [ "out" ]
-        },
+        "group" : null,
         "properties" : {
           "src_desc" : "",
           "phase" : 0,
@@ -165,19 +71,20 @@
           "udf_definitions" : [ ],
           "limit" : 0
         },
-        "ignore" : false
+        "metadata" : {
+          "label" : "Customers",
+          "x" : 181,
+          "y" : 197
+        },
+        "ports" : {
+          "inputs" : [ ],
+          "outputs" : [ "out" ]
+        },
+        "lineage" : ""
       },
       "Report" : {
         "component" : "Target",
-        "metadata" : {
-          "label" : "Report",
-          "x" : 894,
-          "y" : 276
-        },
-        "ports" : {
-          "inputs" : [ "in" ],
-          "outputs" : [ ]
-        },
+        "group" : null,
         "properties" : {
           "src_desc" : "",
           "phase" : 0,
@@ -188,32 +95,24 @@
           "udf_definitions" : [ ],
           "limit" : 0
         },
-        "ignore" : false
-      },
-      "Sum_Amounts" : {
-        "component" : "Aggregate",
         "metadata" : {
-          "label" : "Sum Amounts",
-          "x" : 718,
-          "y" : 273
+          "label" : "Report",
+          "x" : 894,
+          "y" : 276
         },
         "ports" : {
           "inputs" : [ "in" ],
-          "outputs" : [ "out" ]
+          "outputs" : [ ]
         },
+        "lineage" : ""
+      },
+      "Sum_Amounts" : {
+        "component" : "Aggregate",
+        "group" : null,
         "properties" : {
           "src_desc" : "",
-          "phase" : 0,
-          "ramp" : 0,
           "detailedStats" : false,
-          "columns" : [ {
-            "targetCol" : "customer_id",
-            "expression" : {
-              "format" : "scala",
-              "expr" : "col(\"customer_id\")"
-            }
-          } ],
-          "udf_definitions" : [ ],
+          "ramp" : 0,
           "aggcols" : [ {
             "targetCol" : "first_name",
             "expression" : {
@@ -239,22 +138,32 @@
               "expr" : "max(col(\"full_name\"))"
             }
           } ],
+          "udf_definitions" : [ ],
           "opType" : "groupBy",
-          "limit" : 0
+          "phase" : 0,
+          "limit" : 0,
+          "columns" : [ {
+            "targetCol" : "customer_id",
+            "expression" : {
+              "format" : "scala",
+              "expr" : "col(\"customer_id\")"
+            }
+          } ]
         },
-        "ignore" : false
+        "metadata" : {
+          "label" : "Sum Amounts",
+          "x" : 718,
+          "y" : 273
+        },
+        "ports" : {
+          "inputs" : [ "in" ],
+          "outputs" : [ "out" ]
+        },
+        "lineage" : ""
       },
       "Orders" : {
         "component" : "Source",
-        "metadata" : {
-          "label" : "Orders",
-          "x" : 184,
-          "y" : 348
-        },
-        "ports" : {
-          "inputs" : [ ],
-          "outputs" : [ "out" ]
-        },
+        "group" : null,
         "properties" : {
           "src_desc" : "",
           "phase" : 0,
@@ -265,10 +174,75 @@
           "udf_definitions" : [ ],
           "limit" : 0
         },
-        "ignore" : false
+        "metadata" : {
+          "label" : "Orders",
+          "x" : 184,
+          "y" : 348
+        },
+        "ports" : {
+          "inputs" : [ ],
+          "outputs" : [ "out" ]
+        },
+        "lineage" : ""
       },
       "With_FullName" : {
         "component" : "Reformat",
+        "group" : null,
+        "properties" : {
+          "src_desc" : "",
+          "phase" : 0,
+          "ramp" : 0,
+          "detailedStats" : false,
+          "udf_definitions" : [ ],
+          "functions" : [ {
+            "inputArgs" : [ {
+              "type" : "sql",
+              "expr" : "customer_id"
+            } ],
+            "functionName" : "column_expression",
+            "enabled" : true,
+            "addReplaceColumn" : "customer_id"
+          }, {
+            "inputArgs" : [ {
+              "type" : "sql",
+              "expr" : "first_name"
+            } ],
+            "functionName" : "column_expression",
+            "enabled" : true,
+            "addReplaceColumn" : "first_name"
+          }, {
+            "inputArgs" : [ {
+              "type" : "sql",
+              "expr" : "last_name"
+            } ],
+            "functionName" : "column_expression",
+            "enabled" : true,
+            "addReplaceColumn" : "last_name"
+          }, {
+            "inputArgs" : [ {
+              "type" : "sql",
+              "expr" : "amount"
+            } ],
+            "functionName" : "column_expression",
+            "enabled" : true,
+            "addReplaceColumn" : "amount"
+          }, {
+            "inputArgs" : [ {
+              "type" : "sql",
+              "expr" : "concat(first_name, ' - ', last_name)"
+            } ],
+            "functionName" : "column_expression",
+            "enabled" : true,
+            "addReplaceColumn" : "full_name"
+          }, {
+            "inputArgs" : [ {
+              "type" : "sql",
+              "expr" : "order_status"
+            } ],
+            "addReplaceColumn" : "order_status"
+          } ],
+          "limit" : 0
+        },
         "metadata" : {
           "label" : "With FullName",
           "x" : 547,
@@ -278,57 +252,103 @@
           "inputs" : [ "in" ],
           "outputs" : [ "out" ]
         },
-        "properties" : {
-          "src_desc" : "",
-          "phase" : 0,
-          "ramp" : 0,
-          "detailedStats" : false,
-          "udf_definitions" : [ ],
-          "functions" : [ {
-            "functionName" : "column_expression",
-            "addReplaceColumn" : "customer_id",
-            "inputArgs" : [ {
-              "type" : "scala",
-              "expr" : "col(\"customer_id\")"
-            } ],
-            "enabled" : true
-          }, {
-            "functionName" : "column_expression",
-            "addReplaceColumn" : "first_name",
-            "inputArgs" : [ {
-              "type" : "scala",
-              "expr" : "col(\"first_name\")"
-            } ],
-            "enabled" : true
-          }, {
-            "functionName" : "column_expression",
-            "addReplaceColumn" : "last_name",
-            "inputArgs" : [ {
-              "type" : "scala",
-              "expr" : "col(\"last_name\")"
-            } ],
-            "enabled" : true
-          }, {
-            "functionName" : "column_expression",
-            "addReplaceColumn" : "amount",
-            "inputArgs" : [ {
-              "type" : "scala",
-              "expr" : "col(\"amount\")"
-            } ],
-            "enabled" : true
-          }, {
-            "functionName" : "column_expression",
-            "addReplaceColumn" : "full_name",
-            "inputArgs" : [ {
-              "type" : "scala",
-              "expr" : "concat(col(\"first_name\"), lit(\" - \"), col(\"last_name\"))"
-            } ],
-            "enabled" : true
-          } ],
-          "limit" : 0
-        },
-        "ignore" : false
+        "lineage" : ""
       }
-    }
+    },
+    "connections" : [ {
+      "src" : {
+        "process" : "Customers",
+        "port" : "out"
+      },
+      "tgt" : {
+        "process" : "By_CustomerId",
+        "port" : "left"
+      },
+      "metadata" : {
+        "route" : "e1"
+      },
+      "lineage" : ""
+    }, {
+      "src" : {
+        "process" : "Orders",
+        "port" : "out"
+      },
+      "tgt" : {
+        "process" : "By_CustomerId",
+        "port" : "right"
+      },
+      "metadata" : {
+        "route" : "e2"
+      },
+      "lineage" : ""
+    }, {
+      "src" : {
+        "process" : "By_CustomerId",
+        "port" : "out"
+      },
+      "tgt" : {
+        "process" : "With_FullName",
+        "port" : "in"
+      },
+      "metadata" : {
+        "route" : "e3"
+      },
+      "lineage" : ""
+    }, {
+      "src" : {
+        "process" : "With_FullName",
+        "port" : "out"
+      },
+      "tgt" : {
+        "process" : "Sum_Amounts",
+        "port" : "in"
+      },
+      "metadata" : {
+        "route" : "e4"
+      },
+      "lineage" : ""
+    }, {
+      "src" : {
+        "process" : "Sum_Amounts",
+        "port" : "out"
+      },
+      "tgt" : {
+        "process" : "Report",
+        "port" : "in"
+      },
+      "metadata" : {
+        "route" : "e5"
+      },
+      "lineage" : ""
+    } ],
+    "groups" : [ ],
+    "locked" : false,
+    "metainfo" : {
+      "lastUpdated" : 1620253018565,
+      "id" : "SummitWorkflow",
+      "memory" : 1,
+      "imported" : true,
+      "language" : "scala",
+      "processors" : 1,
+      "cluster" : "local",
+      "mode" : "batch",
+      "interimMode" : "full",
+      "udfs" : {
+        "language" : "scala",
+        "udfs" : [ ]
+      },
+      "udafs" : {
+        "language" : "scala",
+        "code" : "package udfs\n\nimport org.apache.spark.sql.expressions._\nimport org.apache.spark.sql.types._\nimport org.apache.spark.sql._\n\n/**\n  * Here you can define your custom aggregate functions.\n  *\n  * Make sure to register your `udafs` in the register_udafs function below.\n  *\n  * Example:\n  *\n  * object GeometricMean extends UserDefinedAggregateFunction {\n  *   // This is the input fields for your aggregate function.\n  *   override def inputSchema: org.apache.spark.sql.types.StructType =\n  *     StructType(StructField(\"value\", DoubleType) :: Nil)\n  *\n  *   // This is the internal fields you keep for computing your aggregate.\n  *   override def bufferSchema: StructType = StructType(\n  *     StructField(\"count\", LongType) ::\n  *     StructField(\"product\", DoubleType) :: Nil\n  *   )\n  *\n  *   // This is the output type of your aggregatation function.\n  *   override def dataType: DataType = DoubleType\n  *\n  *   override def deterministic: Boolean = true\n  *\n  *   // This is the initial value for your buffer schema.\n  *   override def initialize(buffer: MutableAggregationBuffer): Unit = {\n  *     buffer(0) = 0L\n  *     buffer(1) = 1.0\n  *   }\n  *\n  *   // This is how to update your buffer schema given an input.\n  *   override def update(buffer: MutableAggregationBuffer, input: Row): Unit = {\n  *     buffer(0) = buffer.getAs[Long](0) + 1\n  *     buffer(1) = buffer.getAs[Double](1) * input.getAs[Double](0)\n  *   }\n  *\n  *   // This is how to merge two objects with the bufferSchema type.\n  *   override def merge(buffer1: MutableAggregationBuffer, buffer2: Row): Unit = {\n  *     buffer1(0) = buffer1.getAs[Long](0) + buffer2.getAs[Long](0)\n  *     buffer1(1) = buffer1.getAs[Double](1) * buffer2.getAs[Double](1)\n  *   }\n  *\n  *   // This is where you output the final value, given the final value of your bufferSchema.\n  *   override def evaluate(buffer: Row): Any = {\n  *     math.pow(buffer.getDouble(1), 1.toDouble / buffer.getLong(0))\n  *   }\n  * }\n  *\n  */\n\n\nobject UDAFs {\n  /**\n    * Registers UDAFs with Spark SQL\n    */\n  def registerUDAFs(spark: SparkSession): Unit = {\n    /**\n      * Example:\n      *\n      * spark.udf.register(\"gm\", GeometricMean)\n      *\n      */\n\n\n  }\n}\n"
+      },
+      "sparkOptions" : {
+        "options" : {
+          "spark.app.name" : "SummitWorkflow",
+          "spark.sql.catalogImplementation" : "hive"
+        }
+      }
+    },
+    "inports" : { },
+    "outports" : { }
   }
 }

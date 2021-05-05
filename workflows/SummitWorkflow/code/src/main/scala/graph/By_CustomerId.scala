@@ -1,5 +1,6 @@
 package graph
 
+import org.apache.spark.sql.types._
 import io.prophecy.libs._
 import io.prophecy.libs.UDFUtils._
 import io.prophecy.libs.Component._
@@ -10,7 +11,6 @@ import org.apache.spark.sql.ProphecyDataFrame._
 import org.apache.spark._
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.types._
 import config.ConfigStore._
 import udfs.UDFs._
 import udfs._
@@ -30,7 +30,8 @@ object By_CustomerId {
       col("left.customer_id").as("customer_id"),
       col("left.first_name").as("first_name"),
       col("left.last_name").as("last_name"),
-      col("right.amount").as("amount")
+      col("right.amount").as("amount"),
+      col("right.order_status").as("order_status")
     )
 
     out
