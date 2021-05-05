@@ -27,7 +27,7 @@ object With_FullName {
       col("first_name"),
       col("last_name"),
       col("amount"),
-      concat(col("first_name"), col("last_name")).as("full_name")
+      concat(col("first_name"), lit(" - "), col("last_name")).as("full_name")
     )
 
     out
